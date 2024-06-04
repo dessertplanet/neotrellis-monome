@@ -13,7 +13,7 @@
 // PICO OR KB2040QT or FEATHER2040QT
 // change platformio.ini board to use `adafruit_feather`
 #ifndef BOARDTYPE
-#define BOARDTYPE PICO
+#define BOARDTYPE KB2040QT
 #endif
 
 // SET YOUR ADDRESSES 
@@ -29,8 +29,8 @@ const uint8_t addrRowTwo[4] = {0x33,0x31,0x3E,0x36};
 // KeeBoar KB2040 - STEMMA-QT uses 12/13 and Wire
 #if BOARDTYPE == KB2040QT
   #define MYWIRE Wire
-  #define I2C_SDA 12
-  #define I2C_SCL 13
+  #define I2C_SDA 0
+  #define I2C_SCL 1
 #endif
 
 // Feather RP2040 - STEMMA-QT uses 2/3 and Wire
