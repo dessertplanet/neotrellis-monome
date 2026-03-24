@@ -15,6 +15,9 @@ endif()
 cmake_minimum_required(VERSION 3.13)
 
 # Pull in the Pico SDK (must be before project())
+
+# UPDATE HERE FOR YOUR BOARD AND BUILD
+
 # SET BOARD TYPE
 # board type can be:
 # pico  (included in Pico SDK)
@@ -52,7 +55,7 @@ add_custom_target(embedded_resources DEPENDS ${CMAKE_SOURCE_DIR}/src/iii/lua/lib
 
 # Main executable
 add_executable(neotrellis-iii
-    src/dinkii-neotrellis.cpp
+    src/neotrellis_monome.cpp
     src/device.cpp
     src/MonomeSerialDevice.cpp
     src/debug.cpp
@@ -76,6 +79,10 @@ add_executable(neotrellis-iii
     ${CMAKE_SOURCE_DIR}/src/iii/resource/lib_lua.c
 )
 
+# ====================================================================================
+
+# UPDATE HERE FOR YOUR BOARD AND BUILD
+
 # Build defines
 target_compile_definitions(neotrellis-iii PRIVATE
     LUA_COMPAT_5_2
@@ -84,6 +91,10 @@ target_compile_definitions(neotrellis-iii PRIVATE
     BOARDTYPE=2  # must be number - options are:  1=PICO, 2=KB2040QT, 3=DINKII, 
     GRIDCOUNT=3   # must be number - options are:  1=4X4, 2=8x8, 3=16x8, 4=16x16 
 )
+
+
+# ====================================================================================
+
 # # Force-include the Lua 5.4↔5.5 compatibility shim for iii's vm.c only.
 # # vm.c calls lua_newstate(f,ud,seed) and luaL_makeseed(L) which are Lua 5.5 APIs.
 # set_source_files_properties(src/iii/vm.c PROPERTIES

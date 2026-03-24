@@ -10,6 +10,7 @@
 #include "device.h"
 #include "fs.h"
 #include "help.h"
+#include "iii.h"
 #include "metro.h"
 #include "midi.h"
 #include "serial.h"
@@ -183,6 +184,11 @@ static int l_device_id(lua_State *l) {
   return 1;
 }
 
+static int l_device_version(lua_State *l) {
+  lua_pushstring(l, device_version());
+  return 1;
+}
+
 static int l_fs_read_file(lua_State *l) {
   const char *path = lua_tostring(l, 1);
   lfs_file_t file;
@@ -302,6 +308,7 @@ static const struct luaL_Reg main_lib[] = {{"help", l_help},
                                            {"metro_set", l_metro_set},
                                            {"get_time", l_get_time},
                                            {"device_id", l_device_id},
+                                           {"device_version", l_device_version},
 
                                            {"fs_read_file", l_fs_read_file},
                                            {"fs_run_file", l_fs_run_file},
@@ -346,9 +353,24 @@ void vm_init(bool run_script) {
   luaL_setfuncs(L, get_device_lib(), 0);
   lua_pop(L, 1);
 
+  bool write_lib = false;
+
   // test if lib.lua present, write it if not
   lfs_file_t f;
   if (fs_file_open(&f, "lib.lua", LFS_O_RDONLY) != 0) {
+    serial("-- lib.lua not found\r\n");
+    write_lib = true;
+  } else {
+    char buf[24];
+    fs_file_read(&f, buf, 24);
+    fs_file_close(&f);
+    if(strstr(buf,III_VERSION)==NULL) {
+      serial("-- lib.lua wrong version\r\n");
+      write_lib=true;
+    }
+  }
+
+  if (write_lib) {
     serial("-- init: writing lib.lua\r\n");
     // const unsigned int sz = (unsigned int)strlen(lua_init_code());
     const unsigned int sz = (unsigned int)strlen((const char *)lib_lua_data);
@@ -364,8 +386,6 @@ void vm_init(bool run_script) {
       serial("-- init: writing lib.lua failed!!\r\n");
     }
     free(buf);
-  } else {
-    fs_file_close(&f);
   }
 
   if (run_script) {
@@ -463,7 +483,7 @@ void vm_handle_midi(uint8_t data1, uint8_t data2, uint8_t data3) {
   }
   lua_getglobal(L, "event_midi");
   if (lua_isnil(L, -1)) {
-    serial("event_midi: %d %d %d\r\n", data1, data2, data3);
+    //serial("event_midi: %d %d %d\r\n", data1, data2, data3);
     lua_pop(L, 1);
     return;
   }
