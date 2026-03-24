@@ -73,6 +73,14 @@ const uint8_t addrRowTwo[4] = {0x33,0x31,0x3E,0x36};
   #define LED_PIN2 1 // NO LED2
 #endif
 
+// Feather RP2040 - STEMMA-QT uses 2/3 and Wire
+#if BOARDTYPE == FEATHER2040QT
+  #define I2C_BUS i2c0
+  #define I2C_SDA 2
+  #define I2C_SCL 3
+  #define LED_PIN 13  // LED1
+#endif
+
 #if BOARDTYPE == DINKII
   #define I2C_BUS i2c1
   #define I2C_SDA 2

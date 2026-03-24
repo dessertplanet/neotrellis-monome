@@ -15,16 +15,21 @@ Look at the `# UPDATE HERE FOR YOUR BOARD AND BUILD` sections of `CMakeLists.txt
 pico  (included in Pico SDK)  
 adafruit_kb2040  (included in Pico SDK)  
 board_dinkii  (included in neotrellis repo)  
-
+adafruit_feather_rp2040  (included in Pico SDK)   
 
 `# UPDATE HERE FOR YOUR BOARD AND BUILD`
 `# Build defines`
 
 Set these according to your specific build  
 ```
-    BOARDTYPE=2  # must be number - options are:  1=PICO, 2=KB2040QT, 3=DINKII, 
+    BOARDTYPE=2  # must be number - options are:  1=PICO, 2=KB2040QT, 3=DINKII, 4=FEATHER2040QT
     GRIDCOUNT=3   # must be number - options are:  1=4X4, 2=8x8, 3=16x8, 4=16x16 
 ```
+
+### i2c address configuration
+
+If you're not using the default i2c address configuration, you might need to change i2c addresses in `config.h` to match your boards
+
 
 ### iii  
 
