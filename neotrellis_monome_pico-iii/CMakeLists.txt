@@ -23,7 +23,7 @@ cmake_minimum_required(VERSION 3.13)
 # pico  (included in Pico SDK)
 # adafruit_kb2040  (included in Pico SDK)
 # board_dinkii  (included in neotrellis repo)
-set(PICO_BOARD adafruit_kb2040 CACHE STRING "Board type")
+set(PICO_BOARD pico CACHE STRING "Board type")
 
 set(PICO_BOARD_HEADER_DIRS ${CMAKE_CURRENT_LIST_DIR} CACHE STRING "Additional board header directories")
 include(pico_sdk_import.cmake)
@@ -88,7 +88,7 @@ target_compile_definitions(neotrellis-iii PRIVATE
     LUA_COMPAT_5_2
     LUA_USE_C89
     USE_TINYUSB=1
-    BOARDTYPE=2  # must be number - options are:  1=PICO, 2=KB2040QT, 3=DINKII, 
+    BOARDTYPE=1  # must be number - options are:  1=PICO, 2=KB2040QT, 3=DINKII, 
     GRIDCOUNT=3   # must be number - options are:  1=4X4, 2=8x8, 3=16x8, 4=16x16 
 )
 

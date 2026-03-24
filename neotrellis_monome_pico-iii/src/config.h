@@ -2,6 +2,8 @@
 #include "pico/stdlib.h"
 #include <stdint.h>
 
+#define DEVICE_VERSION "1.1.0"
+
 #define TEST 0 // SET TO 1 for testing
 
 #undef I2C_SDA
@@ -16,7 +18,7 @@
 // DEFINE WHAT BOARD YOU ARE USING
 // PICO OR KB2040QT or FEATHER2040QT
 #ifndef BOARDTYPE
-#define BOARDTYPE KB2040QT
+#define BOARDTYPE PICO
 #endif
 
 
