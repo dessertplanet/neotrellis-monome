@@ -285,6 +285,8 @@ extern "C" void device_task() {
         sendLeds_iii();
         grid_dirty = false;
     }
+
+    tud_cdc_n_write_flush(0);
 }
 
 extern "C" void device_handle_serial(uint8_t *data, uint32_t len) {
