@@ -35,6 +35,9 @@ uint8_t mode = 0;
 // Defined in device.cpp — blocking monome protocol loop
 extern "C" void device_monome_loop();
 
+// Defined in Adafruit_I2CDevice.cpp — lets us pump tud_task() during I2C delays
+void neotrellis_set_poll_callback(void (*cb)(void));
+
 // Core 1: lockout victim for safe flash operations from core 0.
 // lfs_erase/lfs_prog in fs.c call multicore_lockout_start_blocking(),
 // which requires the other core to have registered a lockout handler.
@@ -71,29 +74,28 @@ int main() {
 
     bool run_script = true;
 
+    // Read saved mode BEFORE USB init so the correct descriptor is served
+    // from the very first enumeration attempt.
+    mode = flash_read_mode();
+    g_monome_mode = mode;
+
     SetupBoard();
-    device_init(); // NeoTrellis hardware init
-    tusb_init();   // enable USB
 
-    // Give USB time to stabilize
-    sleep_ms(500);
-    for (int i = 0; i < 50; i++) {
-        tud_task();
-        sleep_ms(10);
-    }
+    // Start USB early — the host can begin enumeration while NeoTrellis
+    // I2C init runs.  Uses tud_init (not tusb_init) to match iii-grid-one.
+    tud_init(BOARD_TUD_RHPORT);
 
+    // Pump tud_task() during the ~2s of NeoTrellis I2C init delays so the
+    // host can finish CDC enumeration before iii_loop() starts.
+    neotrellis_set_poll_callback(tud_task);
+
+    device_init(); // NeoTrellis hardware init (includes mode_check)
 
     // Start core 1 as a multicore lockout victim before any LFS flash
     // operations (lfs_format, lfs_prog, lfs_erase). Core 1 does nothing
     // else; we wait for it to signal that its lockout handler is registered.
     multicore_launch_core1(core1_entry);
     multicore_fifo_pop_blocking(); // wait until core 1 handler is ready
-
-
-    // reset USB descriptor
-    //   mode 0 (iii)    → DINKII USB  (needs CDC for REPL)
-    //   mode 1 (monome) → MONOME USB  (monome VID/PID for host compatibility)
-    // g_monome_mode = mode;
 
     if (mode == 0) {
         gpio_put(LED_PIN2, 1);  // blue
