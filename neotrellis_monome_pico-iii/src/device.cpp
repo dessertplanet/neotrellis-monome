@@ -259,7 +259,17 @@ extern "C" void device_init() {
 }
 
 extern "C" void device_task() {
-    trellis.read();
+    // trellis.read() polls all seesaw tiles over I2C (~5-8ms for 8 tiles).
+    // Running it every loop iteration starves serial_task()/tud_task() and
+    // causes CDC responses (file list, etc.) to time out.  Throttle to every
+    // 8ms — still fast enough for responsive key input (~125Hz scan rate),
+    // but leaves most loop iterations free for USB servicing.
+    static uint32_t last_read = 0;
+    uint32_t now = to_ms_since_boot(get_absolute_time());
+    if (now - last_read >= 8) {
+        trellis.read();
+        last_read = now;
+    }
 
     uint8_t ewr = 0;
     while (grid_event_count > 0) {
