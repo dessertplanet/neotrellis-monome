@@ -67,8 +67,8 @@ const uint8_t addrRowTwo[4] = {0x33,0x31,0x3E,0x36};
 // KeeBoar KB2040 - STEMMA-QT uses 12/13 and Wire
 #if BOARDTYPE == KB2040QT
   #define I2C_BUS i2c0
-  #define I2C_SDA 0
-  #define I2C_SCL 1
+  #define I2C_SDA 28
+  #define I2C_SCL 29
   #define LED_PIN 0  //  NO LED1
   #define LED_PIN2 1 // NO LED2
 #endif
