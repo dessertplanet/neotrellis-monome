@@ -47,7 +47,7 @@ static const uint8_t addrRowTwo[2] = {0x3E,0x36};
 #define NUM_ROWS 8  // down - rows
 #define NUM_COLS 16 // across - columns
 const uint8_t addrRowOne[4] = {0x32,0x30,0x2F,0x2E}; 
-const uint8_t addrRowTwo[4] = {0x33,0x31,0x3E,0x36}; 
+const uint8_t addrRowTwo[4] = {0x33,0x31,0x3E,0x36};
 #endif
 #if GRIDCOUNT == TWOFIFTYSIX
 #define NUM_ROWS 16 // down - rows
@@ -67,8 +67,8 @@ const uint8_t addrRowTwo[4] = {0x33,0x31,0x3E,0x36};
 // KeeBoar KB2040 - STEMMA-QT uses 12/13 and Wire
 #if BOARDTYPE == KB2040QT
   #define I2C_BUS i2c0
-  #define I2C_SDA 12
-  #define I2C_SCL 13
+  #define I2C_SDA 0
+  #define I2C_SCL 1
   #define LED_PIN 0  //  NO LED1
   #define LED_PIN2 1 // NO LED2
 #endif
