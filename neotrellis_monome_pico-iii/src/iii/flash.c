@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <string.h>
 
 #include "hardware/flash.h"
 #include "hardware/sync.h"
@@ -31,13 +32,14 @@ void flash_init() {
   flash_program_end_offset = (uint32_t)&__flash_binary_end - flash_start;
   flash_status_offset = flash_program_end_offset + 1;
 
-  // block alignment makes prog/erase faster
-  if (flash_status_offset % FLASH_BLOCK_SIZE) {
+  // align status region to sector boundary: erase operations require this
+  if (flash_status_offset % FLASH_SECTOR_SIZE) {
     flash_status_offset +=
-        FLASH_BLOCK_SIZE - (flash_status_offset % FLASH_BLOCK_SIZE);
+        FLASH_SECTOR_SIZE - (flash_status_offset % FLASH_SECTOR_SIZE);
   }
 
-  flash_fs_offset = flash_status_offset + FLASH_BLOCK_SIZE;
+  // reserve one full sector for status/mode so FS also starts sector-aligned
+  flash_fs_offset = flash_status_offset + FLASH_SECTOR_SIZE;
   flash_fs_start = XIP_BASE + flash_fs_offset;
 
   uint32_t flash_fs_size = flash_fs_size =
@@ -60,6 +62,7 @@ void flash_write_mode(uint8_t m) {
   // !!!
   // no multicore lockout because this must happen before multicore enabled
   uint8_t b[256]; // write must be 256 bytes
+  memset(b, 0, sizeof(b));
   b[0] = FLASH_OK;
   b[1] = m;
   flash_range_erase(flash_status_offset, FLASH_SECTOR_SIZE);

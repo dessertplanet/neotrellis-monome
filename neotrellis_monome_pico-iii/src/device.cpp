@@ -215,6 +215,7 @@ extern "C" bool check_device_key() {
 extern "C" void mode_check() {
     uint8_t saved = flash_read_mode();
     mode = saved;
+    g_monome_mode = mode;
     
 
     check_device_key();   // polls 500 ms; keyCheck toggles mode if key 0,0 pressed
